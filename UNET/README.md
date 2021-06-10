@@ -1,4 +1,8 @@
-##Fine_Tuning.ipynb
+# Performance of the model
+We train here the U-NET on the synthetic images, and fine-tune our model on images containing real slow satellite streaks.
+
+## Illustrating the results 
+`Fine_Tuning.ipynb`
 This jupyter notebook loads the models after and before Fine-Tuning and compares the results.
 
 ## DATA
