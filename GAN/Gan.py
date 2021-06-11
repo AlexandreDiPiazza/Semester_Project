@@ -154,6 +154,7 @@ sample_test = tf.cast(tf.reshape(tf.convert_to_tensor(X_data[0,:,:,:]),(1,256,25
 images_x = tf.cast(tf.reshape(tf.convert_to_tensor(X_data[:,:,:,:]),(750,1,256,256,3)), dtype = tf.float32);
 images_y = tf.cast(tf.reshape(tf.convert_to_tensor(Y_data[:,:,:,:]),(1000,1,256,256,3)), dtype = tf.float32);
 
+#Start the Training
 for epoch in range(EPOCHS):
   start = time.time()
   
@@ -167,7 +168,7 @@ for epoch in range(EPOCHS):
   
       
    
-
+  # Save the results of the training
   clear_output(wait=True)
   if (epoch + 1) % 5 == 0:
     ckpt_save_path = ckpt_manager.save()

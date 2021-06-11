@@ -28,7 +28,9 @@ seed(1)
 x_train1 = np.load('CNN_trainingSet/X_train.npy', allow_pickle = True)
 y_train1 = np.load('CNN_trainingSet/Y_train.npy', allow_pickle = True)
 
-
+"""
+This function trains the U-NET on the synthetic images (model 1)
+"""
 
 def conv2d_block(input_tensor, n_filters, kernel_size = 3, batchnorm = True):
     """Function to add 2 convolutional layers with the parameters passed to it"""
@@ -115,6 +117,7 @@ input_img = Input((im_height, im_width, 1), name='img')
 model1 = get_unet(input_img, n_filters= 32, dropout=0.2, batchnorm=True)
 model1.compile(optimizer=Adam(lr =1e-2), loss="binary_crossentropy", metrics=[jaccard_distance])
 
+#train the model and save the checkpoints of model 1.
 results_1 = model1.fit(x_train1[0:2000,:,:], y_train1[0:2000,:,:], batch_size=10, epochs=70, \
                     callbacks= callbacks + [ModelCheckpoint('model1', verbose=1, save_best_only=False, save_weights_only=True)],\
                     validation_data=(x_train1[2000:3000], y_train1[2000:3000]) )

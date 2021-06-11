@@ -26,6 +26,9 @@ tf.random.set_seed(1234)
 """
 This file trains 163 differents models and outputs the average results of the resulting models. 
 It saves the result of each model in 'Fine_Tuning_Parameters.npy'
+
+The main trains a model from model 1 checkpoints, and fine-tune on the real data with the parameters (epochs, learning-rate, etc)
+on which it is called
 """
 def main(I, EPOCH, LR, TR, DRO, X_vraie, Y_vraie) : 
     
@@ -108,6 +111,9 @@ def main(I, EPOCH, LR, TR, DRO, X_vraie, Y_vraie) :
    
 
     def load_model(learning_rate, dropout,i):
+        """
+        Here we freeze some layers depending on the value of i, for fine-tuning the pre-trained model
+        """
         im_height = 256
         im_width = 256
         input_img = Input((im_height, im_width, 1), name='img')
@@ -182,10 +188,12 @@ def main(I, EPOCH, LR, TR, DRO, X_vraie, Y_vraie) :
 
         return sum(Dic)/len(Dic), sum(Acc)/len(Acc), sum(Rec)/len(Rec), sum(Spe)/len(Spe), sum(Pre)/len(Pre), sum(NPVs)/len(NPVs)
 
-                                                                                  
+    # Perform K-Cross Validation for each model to have average results on validation set                                                                              
     k_fold = 4
     seed = 1
     k_indices = build_k_indices(X_vraie, k_fold, 1) 
+    
+    # All the metrics : Dice, Accuracy, Recall, Specificity, Precision, NPV
     Ds = [] ; As = [] ; Rs = [] ; Ss = []
     Ps = [] ; Ns = []
     for k in range(k_fold) :
@@ -211,6 +219,7 @@ def main(I, EPOCH, LR, TR, DRO, X_vraie, Y_vraie) :
     D_m = sum(Ds)/len(Ds) ; A_m = sum(As)/len(As) ; R_m = sum(Rs)/len(Rs)
     S_m = sum(Ss)/len(Ss) ; P_m = sum(Ps)/len(Ps) ; N_m = sum(Ns)/len(Ns)
    
+    # Compute the mean and std of all the metrics defined above.
     npD = np.array(Ds) ; npA = np.array(As) ; npR = np.array(Rs) ; npS = np.array(Ss) ; 
     npP = np.array(Ps) ; npN = np.array(Ns)
 
@@ -225,7 +234,7 @@ def main(I, EPOCH, LR, TR, DRO, X_vraie, Y_vraie) :
     
     return values
     
-
+# Load the 48 real images of satellite streaks after Data Augmentation.
 X_vraie = np.load('FineTuningData/X_augmented.npy')
 Y_vraie = np.load('FineTuningData/Y_augmented.npy')
 
@@ -247,6 +256,7 @@ for mod in I :
         for tresh in TR : 
             for drop in DRO : 
                 for lr in LR : 
+                    # Train the model and save the results for each combination
                     results = main(mod, ep, lr, tresh, drop, X_vraie, Y_vraie)
 		    
 
